@@ -1,0 +1,105 @@
+<form id="schema-form">
+    <label for="product-name">Product Name:</label>
+    <input type="text" id="product-name" required><br><br>
+  <label for="rating-value">Rating Value:</label>
+  <input type="number" id="rating-value" min="1" max="5" required><br><br>
+  
+  <label for="rating-count">Rating Count:</label>
+  <input type="number" id="rating-count" min="1" required><br><br>
+  
+  <label for="review-count">Review Count:</label>
+  <input type="number" id="review-count" min="1" required><br><br>
+  
+    <input type="submit" value="Generate Schema">
+    <button type="button" id="copy-schema">Copy Schema</button> <!-- new button -->
+  </form>
+  <div id="output">
+    <!-- Schema markup will be generated here -->
+  </div>
+  <style>
+  
+  #schema-result body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  form {
+    max-width: 500px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  
+  label {
+    display: inline-block;
+    width: 150px;
+  }
+  
+  input[type="number"] {
+    width: 50px;
+  }
+  
+  input[type="submit"],
+  #copy-schema { /* styling for new button */
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+  
+  #output {
+    max-width: 500px;
+    margin: 20px auto;
+    border: 1px solid #ccc;
+    padding: 20px;
+    white-space: pre-wrap;
+    font-size: 14px;
+  }
+  
+  </style>
+  <script>
+  
+  const form = document.querySelector('#schema-form');
+  const result = document.querySelector('#output');
+  const copyBtn = document.querySelector('#copy-schema'); // new button reference
+  
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const name = document.querySelector('#product-name').value;
+    const ratingValue = document.querySelector('#rating-value').value;
+    const ratingCount = document.querySelector('#rating-count').value;
+    const reviewCount = document.querySelector('#review-count').value;
+  
+    const schema = {
+      '@context': 'http://schema.org',
+      '@type': 'Product',
+      'name': name,
+      'aggregateRating': {
+        '@type': 'AggregateRating',
+        'ratingValue': ratingValue,
+        'ratingCount': ratingCount,
+        'reviewCount': reviewCount
+      }
+    };
+  
+    const outputString = JSON.stringify(schema, null, 2);
+    const outputHTML = `<pre>&lt;script type="application/ld+json"&gt;\n${outputString}\n&lt;/script&gt;</pre>`;
+  output.innerHTML = outputHTML;
+  });
+  
+  copyBtn.addEventListener('click', () => { // new event listener for the copy button
+  const outputText = result.textContent.trim();
+  const tempInput = document.createElement('textarea');
+  tempInput.value = outputText;
+  document.body.appendChild(tempInput);
+  tempInput.select();
+  document.execCommand('copy');
+  document.body.removeChild(tempInput);
+  alert('Schema copied to clipboard!');
+  });
+  
+  </script>
